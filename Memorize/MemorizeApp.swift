@@ -13,9 +13,10 @@ import SwiftUI
 // TODO: обязательно поддержать адекватную структуру папок
 @main
 struct MemorizeApp: App {
+    let game = EmojiMemoryGame()
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(viewModel: game)
         }
     }
 }
@@ -29,3 +30,4 @@ struct MemorizeApp: App {
 // 5. Document the complexity of any computed property that is not O(1)
 // 6. Prefer methods and properties to free functions.
 // 7. Label tuple members and name closure parameters where they appear in your API.
+// 8. Поработать над неймингом файлов, чтобы он лучше матчился с ролями

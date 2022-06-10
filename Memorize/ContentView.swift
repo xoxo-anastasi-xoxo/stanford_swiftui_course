@@ -7,108 +7,25 @@
 
 import SwiftUI
 
-// TODO: сделать нормально.
-let natureEmojies = [
-  "🐬", "🪴", "🐳", "🌷", "🐥",
-  "🌈", "🦚", "🐞", "🌳", "🦋",
-  "☀️", "🐶", "🐠", "🌲", "🐘"
-]
-let vehiclesEmojies = [
-  "🚗", "🚠", "🚂", "🚁", "⛵️",
-  "🚕", "🚌", "🚎", "🚛", "🚜",
-  "🏎", "🚐", "🚒", "🛴", "🚍"
-]
-let foodEmojies = [
-  "🥑", "🥬", "🥒", "🍑", "🥭",
-  "🍎", "🥗", "🍳", "🥘", "🍲",
-  "🍚", "🌰", "🥔", "🍇", "🍋"
-]
-
-enum MemorizeCardSetTheme {
-  case nature([String])
-  case food([String])
-  case vehicles([String])
-  
-  var id: String {
-    switch self {
-    case .nature: return "Nature"
-    case .vehicles: return "Vehicles"
-    case .food: return "Food"
-    }
-  }
-  var systemImage: String {
-    switch self {
-    case .nature: return "globe.europe.africa"
-    case .vehicles: return "car.2"
-    case .food: return "cup.and.saucer"
-    }
-  }
-  var color: Color {
-    switch self {
-    case .nature: return .green
-    case .vehicles: return .red
-    case .food: return .purple
-    }
-  }
-  var emojies: [String] {
-    switch self {
-    case let .nature(arr): return arr
-    case let .vehicles(arr): return arr
-    case let .food(arr): return arr
-    }
-  }
-}
-
-// TODO: при перевороте
+// TODO: при перевороте чтобы все было красиво
 struct ContentView: View {
-  @State var shownCardsCount = 6
-  @State var theme: MemorizeCardSetTheme = .nature(natureEmojies.shuffled())
+  @ObservedObject var viewModel: EmojiMemoryGame
   
   var body: some View {
     NavigationView {
-      VStack {
-        ScrollView {
-          // TODO: adapt 90 to the screen
-          LazyVGrid(columns: [GridItem(.adaptive(minimum: 90))]) {
-            ForEach(theme.emojies[0..<shownCardsCount], id: \.self) {
-              MemorizeCardView(content: $0, color: theme.color)
-            }
+      ScrollView {
+        // TODO: adapt 90 to the screen
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 90))]) {
+          ForEach(viewModel.cards) { card in
+            MemorizeCardView(card: card)
+              .onTapGesture {
+                viewModel.choose(card)
+              }
           }
         }
-        Spacer()
-        // TODO: move to property menu
-        HStack {
-          Button("Remove card", action: {
-            if shownCardsCount > 0 { shownCardsCount -= 1 }
-          })
-          Spacer()
-          // TODO: disabledView
-          Button("Add card", action: {
-            if shownCardsCount < theme.emojies.count { shownCardsCount += 1 }
-          })
-        }
-        .padding(.horizontal)
       }
       .padding()
       .navigationTitle("Memorize!")
-      .toolbar {
-        ToolbarItem(placement: .primaryAction) {
-          Menu {
-            Button(action: { theme = .nature(natureEmojies.shuffled()) }) {
-              Label("Nature", systemImage: "globe.europe.africa")
-            }
-            Button(action: { theme = .food(foodEmojies.shuffled()) }) {
-              Label("Food", systemImage: "cup.and.saucer")
-            }
-              Button(action: { theme = .vehicles(vehiclesEmojies.shuffled()) }) {
-              Label("Vehicles", systemImage: "car.2")
-            }
-          }
-        label: {
-          Label("Sort", systemImage: "paintbrush.pointed")
-        }
-        }
-      }
     }
   }
 }
@@ -116,34 +33,32 @@ struct ContentView: View {
 // TODO: cornerRadius should depend on View size
 // TODO: emojy font size should be bigger
 struct MemorizeCardView: View {
-  let content: String
-  let color: Color
-  
-  @State var isFaceUp = false
+  let card: MemoryGame<String>.Card
   
   var body: some View {
     let shape = RoundedRectangle(cornerRadius: 25)
     ZStack {
-      if isFaceUp {
+      if card.isFaceUp {
         shape.fill(.white)
         shape.strokeBorder(lineWidth: 3)
-        Text(content).font(.largeTitle)
+        Text(card.content).font(.largeTitle)
         
+      } else if card.isMatched {
+        shape.opacity(0)
       } else {
         shape
       }
     }
     .aspectRatio(2/3, contentMode: .fit)
-    .foregroundColor(color)
-    .onTapGesture {
-      isFaceUp.toggle()
-    }
+    .foregroundColor(card.color)
   }
 }
 
 struct ContentView_Previews: PreviewProvider {
   static var previews: some View {
-    ContentView()
+    let game = EmojiMemoryGame()
+    
+    ContentView(viewModel: game)
       .previewInterfaceOrientation(.portrait)
   }
 }
