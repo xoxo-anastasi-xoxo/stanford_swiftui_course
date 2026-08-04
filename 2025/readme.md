@@ -1,3 +1,4 @@
+![Progress](https://img.shields.io/badge/progress-3%25-red)
 # CS193p Spring 2025
 
 https://cs193p.sites.stanford.edu/2025
