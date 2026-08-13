@@ -7,8 +7,19 @@
 
 import SwiftUI
 
-struct PegLineView: View {
+struct PegsView: View {
+    var pegs: [Color]
     var body: some View {
-        Circle()
+        HStack(spacing: 4) {
+            ForEach(0..<pegs.count, id: \.self) {
+                Circle().foregroundStyle(pegs[$0])
+            }
+        }
     }
+}
+
+#Preview {
+    PegsView(pegs: [.red, .green, .blue])
+    PegsView(pegs: [.red, .green, .red, .green,])
+    PegsView(pegs: [.red, .blue, .blue, .green, .green])
 }

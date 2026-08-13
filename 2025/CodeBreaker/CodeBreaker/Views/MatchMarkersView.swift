@@ -17,7 +17,7 @@ struct MatchMarkersView: View {
     let model: MatchMarkersModel
     
     var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
             // + 1 for rounding up
             let middleIndex = (model.total + 1) / 2
             HStack {
@@ -40,7 +40,7 @@ struct MatchMarkersView: View {
         
         Circle()
             .fill(isExact ? Color.primary : isFound ? Color.secondary : Color.clear)
-//            .strokeBorder(.secondary, lineWidth: isFound ? 0 : 5)
+            .strokeBorder(.secondary, lineWidth: isFound ? 0 : 5)
             .aspectRatio(contentMode: .fit)
     }
 }
@@ -48,5 +48,11 @@ struct MatchMarkersView: View {
 #Preview {
     MatchMarkersView(
         model: MatchMarkersModel(exact: 2, inexact: 1, total: 4)
+    )
+    MatchMarkersView(
+        model: MatchMarkersModel(exact: 0, inexact: 3, total: 5)
+    )
+    MatchMarkersView(
+        model: MatchMarkersModel(exact: 1, inexact: 0, total: 6)
     )
 }
