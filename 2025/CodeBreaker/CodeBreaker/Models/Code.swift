@@ -17,14 +17,6 @@ struct Code {
     var kind: Kind
     var pegs: [Peg]
     
-    // Not semantically right. It's better be Matches?
-    var matches: Matches {
-        switch kind {
-        case .attempt(matches: let matches): matches
-        case .guess, .master: Matches(exact: 0, inexact: 0, total: pegs.count)
-        }
-    }
-    
     var isFilled: Bool {
         !pegs.contains(Self.mising)
     }

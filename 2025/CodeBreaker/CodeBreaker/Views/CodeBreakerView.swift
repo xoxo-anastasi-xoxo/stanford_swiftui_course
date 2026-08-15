@@ -33,11 +33,12 @@ struct CodeBreakerView: View {
                     }
                 
             }
-            MatchMarkersView(model: code.matches)
+            Circle()
+                .foregroundStyle(.clear)
                 .overlay {
                     switch code.kind {
-                    case .attempt(_):
-                        EmptyView()
+                    case .attempt(let matches):
+                        MatchMarkersView(model: matches)
                     case .guess:
                         Button("Guess") {
                             withAnimation {
@@ -58,7 +59,6 @@ struct CodeBreakerView: View {
                     }
                 }
         }
-        .scaledToFit()
     }
     
     @ViewBuilder

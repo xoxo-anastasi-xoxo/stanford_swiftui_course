@@ -24,6 +24,7 @@ struct CodeBreaker {
         guess = Code(kind: .guess, count: pegsCount)
     }
     
+    // TODO: Repeats the init logic
     mutating func reset() {
         pegChoices = .palletes.randomElement() ?? .circles
         let pegsCount = Self.getRandomPegsCount()
