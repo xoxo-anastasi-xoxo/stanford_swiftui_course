@@ -7,14 +7,8 @@
 
 import SwiftUI
 
-struct MatchMarkersModel {
-    let exact: Int
-    let inexact: Int
-    let total: Int
-}
-
 struct MatchMarkersView: View {
-    let model: MatchMarkersModel
+    let model: Matches
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -26,7 +20,7 @@ struct MatchMarkersView: View {
                 }
             }
             HStack {
-                ForEach(middleIndex..<model.total, id: \.self) { index in
+                ForEach(middleIndex..<(2 * middleIndex), id: \.self) { index in
                     makeMarker(index: index)
                 }
             }
@@ -37,22 +31,23 @@ struct MatchMarkersView: View {
     private func makeMarker(index: Int) -> some View {
         let isExact = index < model.exact
         let isFound = index < (model.exact + model.inexact)
+        let isEmpty = !isFound && index < model.total
         
         Circle()
             .fill(isExact ? Color.primary : isFound ? Color.secondary : Color.clear)
-            .strokeBorder(.secondary, lineWidth: isFound ? 0 : 5)
+            .strokeBorder(.secondary, lineWidth: isEmpty ? 5 : 0)
             .aspectRatio(contentMode: .fit)
     }
 }
 
 #Preview {
     MatchMarkersView(
-        model: MatchMarkersModel(exact: 2, inexact: 1, total: 4)
+        model: Matches(exact: 2, inexact: 1, total: 4)
     )
     MatchMarkersView(
-        model: MatchMarkersModel(exact: 0, inexact: 3, total: 5)
+        model: Matches(exact: 0, inexact: 3, total: 5)
     )
     MatchMarkersView(
-        model: MatchMarkersModel(exact: 1, inexact: 0, total: 6)
+        model: Matches(exact: 1, inexact: 0, total: 6)
     )
 }
