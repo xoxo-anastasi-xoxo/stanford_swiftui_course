@@ -31,11 +31,9 @@ struct MatchMarkersView: View {
     private func makeMarker(index: Int) -> some View {
         let isExact = index < model.exact
         let isFound = index < (model.exact + model.inexact)
-        let isEmpty = !isFound && index < model.total
         
         Circle()
             .fill(isExact ? Color.primary : isFound ? Color.secondary : Color.clear)
-            .strokeBorder(.secondary, lineWidth: isEmpty ? 5 : 0)
             .aspectRatio(contentMode: .fit)
     }
 }

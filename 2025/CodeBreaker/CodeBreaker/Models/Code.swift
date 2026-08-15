@@ -18,10 +18,10 @@ struct Code {
     var kind: Kind
     var pegs: [Peg]
     
-    var matches: Matches? {
+    var matches: Matches {
         switch kind {
         case .attempt(matches: let matches): matches
-        default: nil
+        case .guess, .master: Matches(exact: 0, inexact: 0, total: pegs.count)
         }
     }
     

@@ -7,3 +7,16 @@
 import SwiftUI
 
 typealias Peg = Color
+
+
+//struct Peg {
+//    enum Kind {
+//        case emogi
+//        case color
+//    }
+//    let value: String
+//    let kind: Kind
+//}
+//
+//let colorPegs: [Peg] = [
+    
