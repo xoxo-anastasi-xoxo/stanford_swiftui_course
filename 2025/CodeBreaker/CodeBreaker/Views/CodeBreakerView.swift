@@ -9,8 +9,7 @@ import SwiftUI
 
 struct CodeBreakerView: View {
     @State var game = CodeBreaker(
-        pegChoices: [.green, .pink, .purple, .yellow],
-        pegsCount: 5
+        pegChoices: [.green, .pink, .purple, .yellow]
     )
     
     var body: some View {
@@ -53,7 +52,7 @@ struct CodeBreakerView: View {
                 .font(.system(size: 80))
                 .minimumScaleFactor(0.1)
             case .master:
-                Button("Reset") {
+                Button("Restart") {
                     withAnimation {
                         game.reset()
                     }

@@ -10,22 +10,22 @@ import SwiftUI
 struct CodeBreaker {
     // Configuration
     let pegChoices: [Peg]
-    let pegsCount: Int
     
     // Gameplay
     var masterCode: Code
     var guess: Code
     var attempts: [Code] = [Code]()
     
-    init(pegChoices: [Peg] = [.red, .green, .blue, .yellow], pegsCount: Int = 4) {
+    init(pegChoices: [Peg] = [.red, .green, .blue, .yellow]) {
         self.pegChoices = pegChoices
-        self.pegsCount = pegsCount
+        let pegsCount = Self.getRandomPegsCount()
         masterCode = Code(kind: .master, count: pegsCount)
         masterCode.randomize(from: pegChoices)
         guess = Code(kind: .guess, count: pegsCount)
     }
     
     mutating func reset() {
+        let pegsCount = Self.getRandomPegsCount()
         masterCode = Code(kind: .master, count: pegsCount)
         masterCode.randomize(from: pegChoices)
         guess = Code(kind: .guess, count: pegsCount)
@@ -49,4 +49,6 @@ struct CodeBreaker {
         guess.pegs[index] = pegChoices[nextIndex]
         
     }
+    
+    private static func getRandomPegsCount() -> Int { (3...6).randomElement() ?? 4 }
 }
