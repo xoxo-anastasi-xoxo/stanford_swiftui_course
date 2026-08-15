@@ -4,7 +4,6 @@
 //
 //  Created by Anastasiia Kazantseva on 15/08/2026.
 //
-import SwiftUI
 
 struct Code {
     enum Kind: Equatable {
@@ -13,11 +12,12 @@ struct Code {
         case attempt(matches: Matches)
     }
     
-    static var mising: Peg = .clear
+    static var mising: Peg = ""
     
     var kind: Kind
     var pegs: [Peg]
     
+    // Not semantically right. It's better be Matches?
     var matches: Matches {
         switch kind {
         case .attempt(matches: let matches): matches
@@ -44,8 +44,8 @@ struct Code {
         var exact = 0
         var inexact = 0
         
-        var unmatched = [Color: Int]()
-        var searched = [Color: Int]()
+        var unmatched = [Peg: Int]()
+        var searched = [Peg: Int]()
         for pair in zip(pegs, code.pegs) {
             if pair.0 == pair.1 {
                 exact += 1

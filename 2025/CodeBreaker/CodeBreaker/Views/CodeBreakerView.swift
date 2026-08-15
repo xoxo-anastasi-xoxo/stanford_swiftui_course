@@ -8,9 +8,7 @@
 import SwiftUI
 
 struct CodeBreakerView: View {
-    @State var game = CodeBreaker(
-        pegChoices: [.green, .pink, .purple, .yellow]
-    )
+    @State var game = CodeBreaker()
     
     var body: some View {
         VStack(spacing: 4) {
@@ -27,15 +25,8 @@ struct CodeBreakerView: View {
     
     func view(for code: Code) -> some View {
         HStack(spacing: 4) {
-            ForEach(0..<code.pegs.count, id: \.self) { index in
-                Star(points: 12)
-                    .contentShape(Circle())
-                    .foregroundStyle(code.pegs[index])
-                    .overlay {
-                        if code.pegs[index] == Code.mising {
-                            Circle().stroke(lineWidth: 1)
-                        }
-                    }
+            ForEach(code.pegs.indices, id: \.self) { index in
+                peg(for: code.pegs[index])
                     .onTapGesture {
                         guard code.kind == .guess else { return }
                         game.changeGuess(at: index)
@@ -45,7 +36,7 @@ struct CodeBreakerView: View {
             MatchMarkersView(model: code.matches)
                 .overlay {
                     switch code.kind {
-                    case .attempt(let matches):
+                    case .attempt(_):
                         EmptyView()
                     case .guess:
                         Button("Guess") {
@@ -68,6 +59,36 @@ struct CodeBreakerView: View {
                 }
         }
         .scaledToFit()
+    }
+    
+    @ViewBuilder
+    private func pegOverlay(for peg: Peg) -> some View {
+        if peg == Code.mising {
+            Circle().stroke(lineWidth: 1)
+        } else if game.pegChoices.kind == .emogi {
+            Text(peg)
+                .font(.system(size: 80))
+                .minimumScaleFactor(0.1)
+        }
+    }
+    
+    @ViewBuilder
+    private func peg(for peg: Peg) -> some View {
+        let overlay = pegOverlay(for: peg)
+        switch game.pegChoices.kind {
+        case .emogi, .circle:
+            Circle().stylePeg(
+                foregroundColorName: peg,
+                overlayContent: { overlay }
+            )
+        case .star:
+            Star(points: 8)
+                .aspectRatio(contentMode: .fit)
+                .stylePeg(
+                    foregroundColorName: peg,
+                    overlayContent: { overlay }
+                )
+        }
     }
 }
 

@@ -9,25 +9,26 @@ import SwiftUI
 
 struct CodeBreaker {
     // Configuration
-    let pegChoices: [Peg]
+    var pegChoices: Pegs
     
     // Gameplay
     var masterCode: Code
     var guess: Code
     var attempts: [Code] = [Code]()
     
-    init(pegChoices: [Peg] = [.red, .green, .blue, .yellow]) {
-        self.pegChoices = pegChoices
-        let pegsCount = Self.getRandomPegsCount()
+    init(pallete: Pegs? = nil, count: Int? = nil) {
+        self.pegChoices = pallete ?? .palletes.randomElement() ?? .circles
+        let pegsCount = count ?? Self.getRandomPegsCount()
         masterCode = Code(kind: .master, count: pegsCount)
-        masterCode.randomize(from: pegChoices)
+        masterCode.randomize(from: pegChoices.values)
         guess = Code(kind: .guess, count: pegsCount)
     }
     
     mutating func reset() {
+        pegChoices = .palletes.randomElement() ?? .circles
         let pegsCount = Self.getRandomPegsCount()
         masterCode = Code(kind: .master, count: pegsCount)
-        masterCode.randomize(from: pegChoices)
+        masterCode.randomize(from: pegChoices.values)
         guess = Code(kind: .guess, count: pegsCount)
         attempts = []
     }
@@ -41,12 +42,12 @@ struct CodeBreaker {
     
     mutating func changeGuess(at index: Int) {
         let existingPegs = guess.pegs[index]
-        guard let indexOfExistingPeg = pegChoices.firstIndex(of: existingPegs) else {
-            guess.pegs[index] = pegChoices.first ?? Code.mising
+        guard let indexOfExistingPeg = pegChoices.values.firstIndex(of: existingPegs) else {
+            guess.pegs[index] = pegChoices.values.first ?? Code.mising
             return
         }
-        let nextIndex = (indexOfExistingPeg + 1) % pegChoices.count
-        guess.pegs[index] = pegChoices[nextIndex]
+        let nextIndex = (indexOfExistingPeg + 1) % pegChoices.values.count
+        guess.pegs[index] = pegChoices.values[nextIndex]
         
     }
     
