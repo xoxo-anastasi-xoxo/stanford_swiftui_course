@@ -34,22 +34,18 @@ struct CodeBreaker {
         attempts = []
     }
     
+    mutating func setGuessPeg(to peg: Peg, at index: Int) {
+        guard guess.pegs.indices.contains(index) else { return }
+        guard pegChoices.values.contains(peg) else { return }
+        guess.pegs[index] = peg
+    }
+    
     mutating func attemptGuess() {
         guard guess.isFilled else { return }
         var attempt = guess
         attempt.kind = .attempt(matches: attempt.matchAgainst(masterCode))
         attempts.append(attempt)
-    }
-    
-    mutating func changeGuess(at index: Int) {
-        let existingPegs = guess.pegs[index]
-        guard let indexOfExistingPeg = pegChoices.values.firstIndex(of: existingPegs) else {
-            guess.pegs[index] = pegChoices.values.first ?? .missing
-            return
-        }
-        let nextIndex = (indexOfExistingPeg + 1) % pegChoices.values.count
-        guess.pegs[index] = pegChoices.values[nextIndex]
-        
+        guess = Code(kind: .guess, count: guess.pegs.count)
     }
     
     private static func getRandomPegsCount() -> Int { (3...6).randomElement() ?? 4 }
