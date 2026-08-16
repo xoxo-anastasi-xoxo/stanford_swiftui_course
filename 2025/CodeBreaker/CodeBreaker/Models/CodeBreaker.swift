@@ -44,7 +44,7 @@ struct CodeBreaker {
     mutating func changeGuess(at index: Int) {
         let existingPegs = guess.pegs[index]
         guard let indexOfExistingPeg = pegChoices.values.firstIndex(of: existingPegs) else {
-            guess.pegs[index] = pegChoices.values.first ?? Code.mising
+            guess.pegs[index] = pegChoices.values.first ?? .missing
             return
         }
         let nextIndex = (indexOfExistingPeg + 1) % pegChoices.values.count

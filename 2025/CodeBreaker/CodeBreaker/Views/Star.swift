@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct Star: Shape {
+    // MARK: Data In
     var points: Int = 5
     var innerRatio: CGFloat = 0.4
 

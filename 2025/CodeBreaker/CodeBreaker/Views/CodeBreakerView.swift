@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CodeBreakerView: View {
-    @State var game = CodeBreaker()
+    @State private var game = CodeBreaker()
     
     var body: some View {
         VStack(spacing: 4) {
@@ -26,11 +26,14 @@ struct CodeBreakerView: View {
     func view(for code: Code) -> some View {
         HStack(spacing: 4) {
             ForEach(code.pegs.indices, id: \.self) { index in
-                peg(for: code.pegs[index])
-                    .onTapGesture {
-                        guard code.kind == .guess else { return }
-                        game.changeGuess(at: index)
-                    }
+                PegView(
+                    peg: code.pegs[index],
+                    kind: game.pegChoices.kind
+                )
+                .onTapGesture {
+                    guard code.kind == .guess else { return }
+                    game.changeGuess(at: index)
+                }
                 
             }
             Circle()
@@ -58,36 +61,6 @@ struct CodeBreakerView: View {
                         .minimumScaleFactor(0.1)
                     }
                 }
-        }
-    }
-    
-    @ViewBuilder
-    private func pegOverlay(for peg: Peg) -> some View {
-        if peg == Code.mising {
-            Circle().stroke(lineWidth: 1)
-        } else if game.pegChoices.kind == .emogi {
-            Text(peg)
-                .font(.system(size: 80))
-                .minimumScaleFactor(0.1)
-        }
-    }
-    
-    @ViewBuilder
-    private func peg(for peg: Peg) -> some View {
-        let overlay = pegOverlay(for: peg)
-        switch game.pegChoices.kind {
-        case .emogi, .circle:
-            Circle().stylePeg(
-                foregroundColorName: peg,
-                overlayContent: { overlay }
-            )
-        case .star:
-            Star(points: 8)
-                .aspectRatio(contentMode: .fit)
-                .stylePeg(
-                    foregroundColorName: peg,
-                    overlayContent: { overlay }
-                )
         }
     }
 }

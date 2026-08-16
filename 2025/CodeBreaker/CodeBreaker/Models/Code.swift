@@ -12,23 +12,21 @@ struct Code {
         case attempt(matches: Matches)
     }
     
-    static var mising: Peg = ""
-    
     var kind: Kind
     var pegs: [Peg]
     
     var isFilled: Bool {
-        !pegs.contains(Self.mising)
+        !pegs.contains(.missing)
     }
     
     init(kind: Kind, count: Int) {
         self.kind = kind
-        self.pegs = .init(repeating: Self.mising, count: count)
+        self.pegs = .init(repeating: .missing, count: count)
     }
     
     mutating func randomize(from choises: [Peg]) {
         for i in pegs.indices {
-            pegs[i] = choises.randomElement() ?? Self.mising
+            pegs[i] = choises.randomElement() ?? .missing
         }
     }
     

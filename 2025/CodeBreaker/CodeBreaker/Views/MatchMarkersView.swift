@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct MatchMarkersView: View {
+    // MARK: Data in
     let model: Matches
     
+    // MARK: Body
     var body: some View {
         VStack(alignment: .leading) {
             // + 1 for rounding up
@@ -27,6 +29,7 @@ struct MatchMarkersView: View {
         }
     }
     
+    // MARK: 
     @ViewBuilder
     private func makeMarker(index: Int) -> some View {
         let isExact = index < model.exact

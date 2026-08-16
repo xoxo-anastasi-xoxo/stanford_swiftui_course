@@ -7,6 +7,10 @@
 
 typealias Peg = String
 
+extension Peg {
+    static let missing: Peg = ""
+}
+
 struct Pegs {
     enum Kind {
         case emogi
