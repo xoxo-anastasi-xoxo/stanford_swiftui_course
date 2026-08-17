@@ -8,8 +8,8 @@ import SwiftUI
 
 struct PegView: View {
     // MARK: Data in
+    @Environment(\.pegsKind) var kind
     let peg: Peg
-    let kind: Pegs.Kind
     
     // MARK: Body
     var body: some View {

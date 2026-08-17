@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+extension EnvironmentValues {
+    @Entry var pegsKind: Pegs.Kind = .circle
+}
+
 struct CodeBreakerView: View {
     // MARK: Data owned
     @State private var game = CodeBreaker()
@@ -28,10 +32,7 @@ struct CodeBreakerView: View {
                     attemptCodeView(for: game.attempts[$0])
                 }
             }
-            PegChooserView(
-                pegChoices: game.pegChoices.values,
-                pegsKind: game.pegChoices.kind,
-            ) { peg in
+            PegChooserView(pegChoices: game.pegChoices.values) { peg in
                 game.setGuessPeg(
                     to: peg,
                     at: selectedGuessPegIndex!
@@ -41,13 +42,11 @@ struct CodeBreakerView: View {
             }
         }
         .padding()
+        .environment(\.pegsKind, game.pegChoices.kind)
     }
     
     private var masterCodeView: some View {
-        CodeView(
-            code: game.masterCode,
-            pegsKind: game.pegChoices.kind
-        ) { restartButton }
+        CodeView(code: game.masterCode) { restartButton }
     }
     private var restartButton: some View {
         Button("Restart") {
@@ -64,7 +63,6 @@ struct CodeBreakerView: View {
     private var guessCodeView: some View {
         CodeView(
             code: game.guess,
-            pegsKind: game.pegChoices.kind,
             selectedIndex: $selectedGuessPegIndex
         ) { guessButton }
     }
@@ -82,10 +80,7 @@ struct CodeBreakerView: View {
     @ViewBuilder
     func attemptCodeView(for code: Code) -> some View {
         if case let .attempt(matches) = code.kind {
-            CodeView(
-                code: code,
-                pegsKind: game.pegChoices.kind
-            ) { MatchMarkersView(model: matches) }
+            CodeView(code: code) { MatchMarkersView(model: matches) }
         }
     }
     

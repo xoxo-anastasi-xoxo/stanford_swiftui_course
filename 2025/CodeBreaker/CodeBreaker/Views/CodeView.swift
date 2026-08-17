@@ -10,7 +10,6 @@ import SwiftUI
 struct CodeView<V: View>: View {
     // MARK: Data in
     let code: Code
-    let pegsKind: Pegs.Kind
     @ViewBuilder let lastElement: () -> V
     
     // MARK: Data shared
@@ -18,12 +17,10 @@ struct CodeView<V: View>: View {
     
     init(
         code: Code,
-        pegsKind: Pegs.Kind,
         selectedIndex: Binding<Int?> = .constant(nil),
         lastElement: @escaping () -> V
     ) {
         self.code = code
-        self.pegsKind = pegsKind
         self.lastElement = lastElement
         self._selectedIndex = selectedIndex
     }
@@ -31,10 +28,7 @@ struct CodeView<V: View>: View {
     var body: some View {
         HStack(spacing: 4) {
             ForEach(code.pegs.indices, id: \.self) { index in
-                PegView(
-                    peg: code.pegs[index],
-                    kind: pegsKind
-                )
+                PegView(peg: code.pegs[index])
                 .padding(4)
                 .overlay {
                     if code.isHidden {

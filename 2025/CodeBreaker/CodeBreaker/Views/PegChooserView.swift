@@ -9,13 +9,12 @@ import SwiftUI
 
 struct PegChooserView: View {
     let pegChoices: [Peg]
-    let pegsKind: Pegs.Kind
     let onChoose: (Peg) -> Void
     
     var body: some View {
         HStack {
             ForEach(pegChoices, id: \.self) { peg in
-                PegView(peg: peg, kind: pegsKind)
+                PegView(peg: peg)
                     .onTapGesture { onChoose(peg) }
             }
         }
