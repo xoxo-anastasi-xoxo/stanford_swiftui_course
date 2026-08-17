@@ -16,9 +16,14 @@ struct CodeBreakerView: View {
     // MARK: Body
     var body: some View {
         VStack(spacing: 4) {
+            #if DEBUG
+                let _ = print(game.masterCode.pegs)
+            #endif
             masterCodeView
             ScrollView {
-                guessCodeView
+                if !game.isOver {
+                    guessCodeView
+                }
                 ForEach(game.attempts.indices.reversed(), id: \.self) {
                     attemptCodeView(for: game.attempts[$0])
                 }

@@ -7,7 +7,7 @@
 
 struct Code {
     enum Kind: Equatable {
-        case master
+        case master(isHidden: Bool)
         case guess
         case attempt(matches: Matches)
     }
@@ -17,6 +17,12 @@ struct Code {
     
     var isFilled: Bool {
         !pegs.contains(.missing)
+    }
+    var isHidden: Bool {
+        switch kind {
+        case .master(let isHidden): isHidden
+        case .guess, .attempt: false 
+        }
     }
     
     init(kind: Kind, count: Int) {

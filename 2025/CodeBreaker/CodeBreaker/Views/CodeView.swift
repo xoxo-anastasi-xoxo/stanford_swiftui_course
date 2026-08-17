@@ -36,6 +36,12 @@ struct CodeView<V: View>: View {
                     kind: pegsKind
                 )
                 .padding(4)
+                .overlay {
+                    if code.isHidden {
+                        RoundedRectangle(cornerRadius: 10)
+                            .foregroundStyle(.gray)
+                    }
+                }
                 .background {
                     if let selectedIndex, index == selectedIndex {
                         Circle()
