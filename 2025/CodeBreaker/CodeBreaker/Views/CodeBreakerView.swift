@@ -14,7 +14,7 @@ extension EnvironmentValues {
 struct CodeBreakerView: View {
     // MARK: Data owned
     @State private var game = CodeBreaker()
-    // TODO: FIXMEPLS
+    // Just for the sake of using Binding we mess up types 😞
     @State private var selectedGuessPegIndex: Int? = 0
     
     // MARK: Body
@@ -48,6 +48,7 @@ struct CodeBreakerView: View {
     private var masterCodeView: some View {
         CodeView(code: game.masterCode) { restartButton }
     }
+
     private var restartButton: some View {
         Button("Restart") {
             withAnimation {
@@ -55,9 +56,8 @@ struct CodeBreakerView: View {
                 game.reset()
             }
         }
-        .foregroundStyle(.red)
-        .font(.system(size: 80))
-        .minimumScaleFactor(0.1)
+        .foregroundStyle(Constants.restartButtonColor)
+        .scalableText()
     }
     
     private var guessCodeView: some View {
@@ -66,6 +66,7 @@ struct CodeBreakerView: View {
             selectedIndex: $selectedGuessPegIndex
         ) { guessButton }
     }
+
     private var guessButton: some View {
         Button("Guess") {
             withAnimation {
@@ -73,8 +74,7 @@ struct CodeBreakerView: View {
             }
         }
         .foregroundStyle(.blue)
-        .font(.system(size: 80))
-        .minimumScaleFactor(0.1)
+        .scalableText()
     }
     
     @ViewBuilder
@@ -84,7 +84,9 @@ struct CodeBreakerView: View {
         }
     }
     
-    struct Constants {}
+    struct Constants {
+        static let restartButtonColor: Color = .red
+    }
 }
 
 #Preview {

@@ -25,6 +25,7 @@ struct CodeView<V: View>: View {
         self._selectedIndex = selectedIndex
     }
     
+    // MARK: Body
     var body: some View {
         HStack(spacing: 4) {
             ForEach(code.pegs.indices, id: \.self) { index in
@@ -39,7 +40,6 @@ struct CodeView<V: View>: View {
                 .background {
                     if let selectedIndex, index == selectedIndex {
                         Circle()
-//                        RoundedRectangle(cornerRadius: 10)
                             .foregroundStyle(.blue)
                             .opacity(0.2)
                     }

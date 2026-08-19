@@ -29,7 +29,6 @@ struct MatchMarkersView: View {
         }
     }
     
-    // MARK: 
     @ViewBuilder
     private func makeMarker(index: Int) -> some View {
         let isExact = index < model.exact

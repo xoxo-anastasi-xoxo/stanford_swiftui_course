@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct PegChooserView: View {
+    // MARK: Data in
     let pegChoices: [Peg]
     let onChoose: (Peg) -> Void
     
+    // MARK: Body
     var body: some View {
         HStack {
             ForEach(pegChoices, id: \.self) { peg in
