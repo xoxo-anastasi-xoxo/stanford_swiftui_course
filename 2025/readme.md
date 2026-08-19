@@ -61,9 +61,9 @@ The simplest are `VStack` and `HStack`.
 
 #### `ZStack`
 
-💫 `ZStack` itself "inherits" the flexibility from its content.
+💫 `ZStack` itself "inherits" the flexibility from its content (the biggest, most flexible view dictates the rules).
 
-`.overlay(...)` is also ZStack, but only of two elements. But its flexibility and size fully depend only on the main view. And `.background(...)` is the same but the other way around!
+`.overlay(...)` acts similar to ZStack of only two elements. But its flexibility and size fully depend only on the main view. And `.background(...)` is the same!
 
 #### `LazyVStack`&`LazyHStack`
 
