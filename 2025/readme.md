@@ -91,9 +91,9 @@ Chooses one best view to show (depending on the space provided). Great thing for
 
 `List` - selectable items like in Settings
 
-`DisclosureGroup`
+`DisclosureGroup` - toggle item
 
-`OutlineGroup`
+`OutlineGroup` - toggle item for a tree structure (like file system)
 
 ### Some view modifiers important for layout
 
