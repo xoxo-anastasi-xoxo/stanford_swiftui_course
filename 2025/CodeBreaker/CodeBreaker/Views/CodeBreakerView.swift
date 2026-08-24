@@ -16,6 +16,8 @@ struct CodeBreakerView: View {
     @State private var game = CodeBreaker()
     // Just for the sake of using Binding we mess up types 😞
     @State private var selectedGuessPegIndex: Int? = 0
+    @State private var isRestarting: Bool = false
+    @State private var isMostRecentMarkerHidden: Bool = false
     
     // MARK: Body
     var body: some View {
@@ -25,20 +27,24 @@ struct CodeBreakerView: View {
             #endif
             masterCodeView
             ScrollView {
-                if !game.isOver {
+                if !game.isOver || isRestarting {
                     guessCodeView
+                        .opacity(game.isOver ? 0 : 1)
                 }
                 ForEach(game.attempts.indices.reversed(), id: \.self) {
-                    attemptCodeView(for: game.attempts[$0])
+                    attemptCodeView(for: game.attempts[$0], with: game.attempts.count - 1 - $0)
                 }
             }
-            PegChooserView(pegChoices: game.pegChoices.values) { peg in
-                game.setGuessPeg(
-                    to: peg,
-                    at: selectedGuessPegIndex!
-                )
-                selectedGuessPegIndex! += 1
-                selectedGuessPegIndex! %= game.guess.pegs.count
+            if !game.isOver {
+                PegChooserView(pegChoices: game.pegChoices.values) { peg in
+                    game.setGuessPeg(
+                        to: peg,
+                        at: selectedGuessPegIndex!
+                    )
+                    selectedGuessPegIndex! += 1
+                    selectedGuessPegIndex! %= game.guess.pegs.count
+                }
+                .transition(Constants.pegChooserTransition)
             }
         }
         .padding()
@@ -47,17 +53,22 @@ struct CodeBreakerView: View {
     
     private var masterCodeView: some View {
         CodeView(code: game.masterCode) { restartButton }
+            .transition(.identity)
     }
 
     private var restartButton: some View {
         Button("Restart") {
-            withAnimation {
-                selectedGuessPegIndex = 0
-                game.reset()
+            withAnimation(Constants.defaultAnimation) {
+                isRestarting = true
+            } completion: {
+                withAnimation(Constants.defaultAnimation) {
+                    game.reset()
+                    isRestarting = false
+                }
             }
         }
         .foregroundStyle(Constants.restartButtonColor)
-        .scalableText()
+        .flexibleSystemFont()
     }
     
     private var guessCodeView: some View {
@@ -65,27 +76,49 @@ struct CodeBreakerView: View {
             code: game.guess,
             selectedIndex: $selectedGuessPegIndex
         ) { guessButton }
+            .animation(nil, value: game.attempts.count)
     }
 
     private var guessButton: some View {
         Button("Guess") {
-            withAnimation {
+            withAnimation(Constants.defaultAnimation) {
                 game.attemptGuess()
+                selectedGuessPegIndex = 0
+                isMostRecentMarkerHidden = true
+            } completion: {
+                withAnimation(Constants.defaultAnimation) {
+                    isMostRecentMarkerHidden = false
+                }
             }
         }
         .foregroundStyle(.blue)
-        .scalableText()
+        .flexibleSystemFont()
     }
     
     @ViewBuilder
-    func attemptCodeView(for code: Code) -> some View {
+    func attemptCodeView(for code: Code, with index: Int) -> some View {
         if case let .attempt(matches) = code.kind {
-            CodeView(code: code) { MatchMarkersView(model: matches) }
+            CodeView(code: code, lastElement: {
+                MatchMarkersView(model: matches)
+                    .opacity(index == 0 && isMostRecentMarkerHidden ? 0 : 1)
+            })
+            .transition(Constants.getAttemptViewTransition(game.isOver || isRestarting))
         }
     }
     
     struct Constants {
         static let restartButtonColor: Color = .red
+        
+        static let pegChooserTransition = AnyTransition.offset(x: 0, y: 200)
+        
+        static let defaultAnimation: Animation = .easeInOut
+        
+        static func getAttemptViewTransition(_ isOver: Bool) -> AnyTransition {
+            .asymmetric(
+                insertion: isOver ? .opacity : .move(edge: .top),
+                removal: .move(edge: .trailing)
+           )
+        }
     }
 }
 

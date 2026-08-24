@@ -56,5 +56,7 @@ struct CodeBreaker {
         }
     }
     
-    private static func getRandomPegsCount() -> Int { (3...6).randomElement() ?? 4 }
+    private static func getRandomPegsCount() -> Int {
+        (3...6).randomElement() ?? 4
+    }
 }

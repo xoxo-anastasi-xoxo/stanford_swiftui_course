@@ -15,6 +15,9 @@ struct CodeView<V: View>: View {
     // MARK: Data shared
     @Binding var selectedIndex: Int?
     
+    // MARK: Data owned
+    @Namespace private var selectionNamespace
+    
     init(
         code: Code,
         selectedIndex: Binding<Int?> = .constant(nil),
@@ -32,17 +35,19 @@ struct CodeView<V: View>: View {
                 PegView(peg: code.pegs[index])
                 .padding(4)
                 .overlay {
-                    if code.isHidden {
-                        RoundedRectangle(cornerRadius: 10)
-                            .foregroundStyle(.gray)
-                    }
+                    RoundedRectangle(cornerRadius: 10)
+                        .foregroundStyle(code.isHidden ? .gray : .clear)
+                        .transaction {
+                            // Prevents animation on restart
+                            if code.isHidden {
+                                $0.animation = nil
+                            }
+                        }
                 }
+                .animation(nil, value: code.pegs[index])
+                .transition(.identity)
                 .background {
-                    if let selectedIndex, index == selectedIndex {
-                        Circle()
-                            .foregroundStyle(.blue)
-                            .opacity(0.2)
-                    }
+                    selectionIndicator(for: index)
                 }
                 .onTapGesture {
                     if selectedIndex != nil {
@@ -57,5 +62,18 @@ struct CodeView<V: View>: View {
                     lastElement()
                 }
         }
+    }
+    
+    @ViewBuilder
+    private func selectionIndicator(for index: Int) -> some View {
+            Group {
+                if let selectedIndex, index == selectedIndex {
+                    RoundedRectangle(cornerRadius: 10)
+                        .foregroundStyle(.gray)
+                        .opacity(0.2)
+                        .matchedGeometryEffect(id: "selection", in: selectionNamespace)
+                }
+            }
+            .animation(.easeInOut, value: selectedIndex)
     }
 }

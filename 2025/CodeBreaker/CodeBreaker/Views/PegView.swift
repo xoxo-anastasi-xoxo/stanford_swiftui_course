@@ -32,7 +32,8 @@ struct PegView: View {
     @ViewBuilder
     private func overlay() -> some View {
         if peg == .missing {
-            Circle().stroke(lineWidth: 1)
+            Circle()
+                .fill(.clear)
         } else if kind == .emogi {
             Text(peg)
                 .font(.system(size: 80))

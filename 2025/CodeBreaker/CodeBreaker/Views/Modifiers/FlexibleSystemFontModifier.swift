@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ScalableTextModifier: ViewModifier {
+struct FlexibleSystemFontModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(.system(size: 80))
@@ -16,7 +16,7 @@ struct ScalableTextModifier: ViewModifier {
 }
 
 extension View {
-    func scalableText() -> some View {
-        modifier(ScalableTextModifier())
+    func flexibleSystemFont() -> some View {
+        modifier(FlexibleSystemFontModifier())
     }
 }
