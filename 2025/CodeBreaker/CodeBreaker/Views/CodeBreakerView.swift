@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CodeBreakerView: View {
     // MARK: Data in
-    @Binding var game: CodeBreaker
+    let game: CodeBreaker
     // MARK: Data owned
     // Just for the sake of using Binding we mess up types 😞
     @State private var selectedGuessPegIndex: Int? = 0
@@ -50,7 +50,6 @@ struct CodeBreakerView: View {
             }
             ToolbarItem {
                 ElapsedTimeView(startTime: game.startTime, endTime: game.endTime)
-//                    .flexibleSystemFont(maxFontSize: 40)
                     .monospaced()
             }
         }
@@ -134,6 +133,6 @@ struct CodeBreakerView: View {
 #Preview {
     @Previewable @State var game = CodeBreaker()
     NavigationStack {
-        CodeBreakerView(game: $game)
+        CodeBreakerView(game: game)
     }
 }

@@ -7,7 +7,8 @@
 
 import SwiftUI
 
-struct CodeBreaker {
+@Observable
+class CodeBreaker: Identifiable {
     // Configuration
     var pegChoices: Pegs
     
@@ -22,45 +23,45 @@ struct CodeBreaker {
         attempts.last?.pegs == masterCode.pegs
     }
     
-    private var _attempts = Set<Code>()
+    private var __attempts = Set<Code>()
     
     init(pallete: Pegs? = nil, count: Int? = nil) {
         self.pegChoices = pallete ?? .palletes.randomElement() ?? .circles
         let pegsCount = count ?? Self.getRandomPegsCount()
-        masterCode = Code(kind: .master(isHidden: true), count: pegsCount)
-        masterCode.randomize(from: pegChoices.values)
         guess = Code(kind: .guess, count: pegsCount)
         startTime = .now
+        masterCode = Code(kind: .master(isHidden: true), count: pegsCount)
+        masterCode.randomize(from: pegChoices.values)
     }
     
     // TODO: Repeats the init logic
-    mutating func reset() {
+    func reset() {
         pegChoices = .palletes.randomElement() ?? .circles
         let pegsCount = Self.getRandomPegsCount()
         // TODO: CONSTANTS?
-        masterCode = Code(kind: .master(isHidden: true), count: pegsCount)
-        masterCode.randomize(from: pegChoices.values)
         guess = Code(kind: .guess, count: pegsCount)
         attempts = []
-        _attempts = []
+        __attempts = []
         startTime = .now
         endTime = nil
+        masterCode = Code(kind: .master(isHidden: true), count: pegsCount)
+        masterCode.randomize(from: pegChoices.values)
     }
     
-    mutating func setGuessPeg(to peg: Peg, at index: Int) {
+    func setGuessPeg(to peg: Peg, at index: Int) {
         guard guess.pegs.indices.contains(index) else { return }
         guard pegChoices.values.contains(peg) else { return }
         guess.pegs[index] = peg
     }
     
     @discardableResult
-    mutating func attemptGuess() -> Bool {
+    func attemptGuess() -> Bool {
         guard guess.isFilled else { return false }
         var attempt = guess
         attempt.kind = .attempt(matches: attempt.matchAgainst(masterCode))
-        guard !_attempts.contains(attempt) else { return false }
+        guard !__attempts.contains(attempt) else { return false }
         attempts.append(attempt)
-        _attempts.insert(attempt)
+        __attempts.insert(attempt)
         guess = Code(kind: .guess, count: guess.pegs.count)
         if isOver {
             masterCode.kind = .master(isHidden: false)

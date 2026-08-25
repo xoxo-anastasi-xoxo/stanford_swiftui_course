@@ -7,7 +7,7 @@
 import SwiftUI
 
 struct GameSummaryView: View {
-    var game: CodeBreaker
+    let game: CodeBreaker
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {

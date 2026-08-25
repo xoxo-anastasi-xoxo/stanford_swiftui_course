@@ -20,11 +20,10 @@ struct GameChooserView: View {
             List {
                 ForEach(
                     $games,
-                    id: \.pegChoices.values,
                     editActions: [.delete, .move]
                 ) { $game in
                     NavigationLink { // Lives only inside NavigationStack
-                        CodeBreakerView(game: $game)
+                        CodeBreakerView(game: game)
                     } label: {
                         GameSummaryView(game: game)
                     }
