@@ -11,7 +11,7 @@ extension Peg {
     static let missing: Peg = ""
 }
 
-struct Pegs {
+struct Pegs: Hashable {
     enum Kind {
         case emogi
         case circle

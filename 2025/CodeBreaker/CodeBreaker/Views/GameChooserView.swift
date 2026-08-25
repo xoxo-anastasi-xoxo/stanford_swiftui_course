@@ -22,13 +22,19 @@ struct GameChooserView: View {
                     $games,
                     editActions: [.delete, .move]
                 ) { $game in
-                    NavigationLink { // Lives only inside NavigationStack
-                        CodeBreakerView(game: game)
-                    } label: {
+                    NavigationLink(value: game) {
                         GameSummaryView(game: game)
                     }
+                    NavigationLink {
+                        PegChooserView(pegChoices: game.masterCode.pegs)
+                            .environment(\.pegsKind, game.pegChoices.kind)
+                    } label: {
+                        Text("Cheat 😅")
+                    }
+                    
                 }
             }
+            .navigationDestination(for: CodeBreaker.self, destination: { CodeBreakerView(game: $0) })
             .listStyle(.plain)
             .toolbar { // Lives only inside NavigationStack
                 EditButton()

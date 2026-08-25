@@ -8,7 +8,7 @@
 import SwiftUI
 
 @Observable
-class CodeBreaker: Identifiable {
+class CodeBreaker {
     // Configuration
     var pegChoices: Pegs
     
@@ -73,4 +73,16 @@ class CodeBreaker: Identifiable {
     private static func getRandomPegsCount() -> Int {
         (3...6).randomElement() ?? 4
     }
+}
+
+extension CodeBreaker: Identifiable, Hashable {
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    static func == (lhs: CodeBreaker, rhs: CodeBreaker) -> Bool {
+        lhs.id == rhs.id
+    }
+     
 }
