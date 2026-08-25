@@ -82,9 +82,11 @@ struct CodeBreakerView: View {
     private var guessButton: some View {
         Button("Guess") {
             withAnimation(Constants.defaultAnimation) {
-                game.attemptGuess()
-                selectedGuessPegIndex = 0
-                isMostRecentMarkerHidden = true
+                let isGuessSucsessful = game.attemptGuess()
+                if isGuessSucsessful {
+                    selectedGuessPegIndex = 0
+                    isMostRecentMarkerHidden = true
+                }
             } completion: {
                 withAnimation(Constants.defaultAnimation) {
                     isMostRecentMarkerHidden = false

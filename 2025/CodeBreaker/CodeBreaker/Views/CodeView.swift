@@ -32,7 +32,7 @@ struct CodeView<V: View>: View {
     var body: some View {
         HStack(spacing: 4) {
             ForEach(code.pegs.indices, id: \.self) { index in
-                PegView(peg: code.pegs[index])
+                PegView(peg: code.isHidden ? "" : code.pegs[index])
                 .padding(4)
                 .overlay {
                     RoundedRectangle(cornerRadius: 10)

@@ -45,8 +45,9 @@ struct CodeBreaker {
         guess.pegs[index] = peg
     }
     
-    mutating func attemptGuess() {
-        guard guess.isFilled else { return }
+    @discardableResult
+    mutating func attemptGuess() -> Bool {
+        guard guess.isFilled else { return false }
         var attempt = guess
         attempt.kind = .attempt(matches: attempt.matchAgainst(masterCode))
         attempts.append(attempt)
@@ -54,6 +55,7 @@ struct CodeBreaker {
         if isOver {
             masterCode.kind = .master(isHidden: false)
         }
+        return true
     }
     
     private static func getRandomPegsCount() -> Int {
