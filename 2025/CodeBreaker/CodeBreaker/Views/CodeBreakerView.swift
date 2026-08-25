@@ -25,11 +25,14 @@ struct CodeBreakerView: View {
             #if DEBUG
                 let _ = print(game.masterCode.pegs)
             #endif
+            ElapsedTime(startTime: game.startTime, endTime: game.endTime)
+                .flexibleSystemFont(maxFontSize: 40)
+                .monospaced()
             masterCodeView
             ScrollView {
-                if !game.isOver || isRestarting {
+                if !game.isOver {
                     guessCodeView
-                        .opacity(game.isOver ? 0 : 1)
+                        .opacity(isRestarting ? 0 : 1)
                 }
                 ForEach(game.attempts.indices.reversed(), id: \.self) {
                     attemptCodeView(for: game.attempts[$0], with: game.attempts.count - 1 - $0)
@@ -59,10 +62,10 @@ struct CodeBreakerView: View {
     private var restartButton: some View {
         Button("Restart") {
             withAnimation(Constants.defaultAnimation) {
-                isRestarting = true
+                isRestarting = game.isOver
+                game.reset()
             } completion: {
                 withAnimation(Constants.defaultAnimation) {
-                    game.reset()
                     isRestarting = false
                 }
             }
