@@ -21,8 +21,12 @@ struct PegChooserView: View {
     var body: some View {
         HStack {
             ForEach(pegChoices, id: \.self) { peg in
-                PegView(peg: peg)
-                    .onTapGesture { onChoose?(peg) }
+                if let onChoose {
+                    PegView(peg: peg)
+                        .onTapGesture { onChoose(peg) }
+                } else {
+                    PegView(peg: peg)
+                }
             }
         }
     }

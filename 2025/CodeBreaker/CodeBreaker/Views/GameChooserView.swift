@@ -16,7 +16,7 @@ struct GameChooserView: View {
     ]
     
     var body: some View {
-        NavigationStack {
+        NavigationSplitView {
             List {
                 ForEach(
                     $games,
@@ -34,11 +34,17 @@ struct GameChooserView: View {
                     
                 }
             }
-            .navigationDestination(for: CodeBreaker.self, destination: { CodeBreakerView(game: $0) })
+            .navigationTitle("Code Breaker")
+            .navigationDestination(for: CodeBreaker.self, destination: {
+                CodeBreakerView(game: $0)
+                    .navigationTitle($0.pegChoices.name)
+            })
             .listStyle(.plain)
             .toolbar { // Lives only inside NavigationStack
                 EditButton()
             }
+        } detail: {
+            Text("Choose a game!")
         }
     }
 }

@@ -42,6 +42,7 @@ struct CodeBreakerView: View {
                     selectedGuessPegIndex! %= game.guess.pegs.count
                 }
                 .transition(Constants.pegChooserTransition)
+                .frame(maxHeight: 80)
             }
         }
         .toolbar {
