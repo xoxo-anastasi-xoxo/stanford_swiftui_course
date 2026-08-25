@@ -22,6 +22,8 @@ struct CodeBreaker {
         attempts.last?.pegs == masterCode.pegs
     }
     
+    private var _attempts = Set<Code>()
+    
     init(pallete: Pegs? = nil, count: Int? = nil) {
         self.pegChoices = pallete ?? .palletes.randomElement() ?? .circles
         let pegsCount = count ?? Self.getRandomPegsCount()
@@ -40,6 +42,7 @@ struct CodeBreaker {
         masterCode.randomize(from: pegChoices.values)
         guess = Code(kind: .guess, count: pegsCount)
         attempts = []
+        _attempts = []
         startTime = .now
         endTime = nil
     }
@@ -55,7 +58,9 @@ struct CodeBreaker {
         guard guess.isFilled else { return false }
         var attempt = guess
         attempt.kind = .attempt(matches: attempt.matchAgainst(masterCode))
+        guard !_attempts.contains(attempt) else { return false }
         attempts.append(attempt)
+        _attempts.insert(attempt)
         guess = Code(kind: .guess, count: guess.pegs.count)
         if isOver {
             masterCode.kind = .master(isHidden: false)

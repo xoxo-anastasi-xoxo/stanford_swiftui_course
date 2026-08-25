@@ -5,8 +5,8 @@
 //  Created by Anastasiia Kazantseva on 15/08/2026.
 //
 
-struct Code {
-    enum Kind: Equatable {
+struct Code: Identifiable, Hashable {
+    enum Kind: Hashable {
         case master(isHidden: Bool)
         case guess
         case attempt(matches: Matches)
@@ -14,6 +14,7 @@ struct Code {
     
     var kind: Kind
     var pegs: [Peg]
+    
     
     var isFilled: Bool {
         !pegs.contains(.missing)
@@ -24,6 +25,7 @@ struct Code {
         case .guess, .attempt: false 
         }
     }
+    var id: Self { self }
     
     init(kind: Kind, count: Int) {
         self.kind = kind

@@ -34,8 +34,8 @@ struct CodeBreakerView: View {
                     guessCodeView
                         .opacity(isRestarting ? 0 : 1)
                 }
-                ForEach(game.attempts.indices.reversed(), id: \.self) {
-                    attemptCodeView(for: game.attempts[$0], with: game.attempts.count - 1 - $0)
+                ForEach(game.attempts.reversed()) {
+                    attemptCodeView(for: $0, isMostRecent: game.attempts.last == $0)
                 }
             }
             if !game.isOver {
@@ -101,11 +101,11 @@ struct CodeBreakerView: View {
     }
     
     @ViewBuilder
-    func attemptCodeView(for code: Code, with index: Int) -> some View {
+    func attemptCodeView(for code: Code, isMostRecent: Bool) -> some View {
         if case let .attempt(matches) = code.kind {
             CodeView(code: code, lastElement: {
                 MatchMarkersView(model: matches)
-                    .opacity(index == 0 && isMostRecentMarkerHidden ? 0 : 1)
+                    .opacity(isMostRecent && isMostRecentMarkerHidden ? 0 : 1)
             })
             .transition(Constants.getAttemptViewTransition(game.isOver || isRestarting))
         }
