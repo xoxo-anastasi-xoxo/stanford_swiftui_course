@@ -21,7 +21,7 @@ struct CodeView<V: View>: View {
     init(
         code: Code,
         selectedIndex: Binding<Int?> = .constant(nil),
-        lastElement: @escaping () -> V
+        lastElement: @escaping () -> V = { EmptyView() }
     ) {
         self.code = code
         self.lastElement = lastElement

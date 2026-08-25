@@ -7,13 +7,10 @@
 
 import SwiftUI
 
-extension EnvironmentValues {
-    @Entry var pegsKind: Pegs.Kind = .circle
-}
-
 struct CodeBreakerView: View {
+    // MARK: Data in
+    @Binding var game: CodeBreaker
     // MARK: Data owned
-    @State private var game = CodeBreaker()
     // Just for the sake of using Binding we mess up types 😞
     @State private var selectedGuessPegIndex: Int? = 0
     @State private var isRestarting: Bool = false
@@ -25,9 +22,6 @@ struct CodeBreakerView: View {
             #if DEBUG
                 let _ = print(game.masterCode.pegs)
             #endif
-            ElapsedTime(startTime: game.startTime, endTime: game.endTime)
-                .flexibleSystemFont(maxFontSize: 40)
-                .monospaced()
             masterCodeView
             ScrollView {
                 if !game.isOver {
@@ -50,17 +44,27 @@ struct CodeBreakerView: View {
                 .transition(Constants.pegChooserTransition)
             }
         }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                restartButton
+            }
+            ToolbarItem {
+                ElapsedTimeView(startTime: game.startTime, endTime: game.endTime)
+//                    .flexibleSystemFont(maxFontSize: 40)
+                    .monospaced()
+            }
+        }
         .padding()
         .environment(\.pegsKind, game.pegChoices.kind)
     }
     
     private var masterCodeView: some View {
-        CodeView(code: game.masterCode) { restartButton }
+        CodeView(code: game.masterCode)
             .transition(.identity)
     }
 
     private var restartButton: some View {
-        Button("Restart") {
+        Button("Restart", systemImage: "arrow.clockwise") {
             withAnimation(Constants.defaultAnimation) {
                 isRestarting = game.isOver
                 game.reset()
@@ -128,5 +132,8 @@ struct CodeBreakerView: View {
 }
 
 #Preview {
-    CodeBreakerView()
+    @Previewable @State var game = CodeBreaker()
+    NavigationStack {
+        CodeBreakerView(game: $game)
+    }
 }

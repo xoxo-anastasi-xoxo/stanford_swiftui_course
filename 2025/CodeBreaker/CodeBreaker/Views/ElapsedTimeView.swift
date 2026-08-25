@@ -6,7 +6,7 @@
 //
 import SwiftUI
 
-struct ElapsedTime: View {
+struct ElapsedTimeView: View {
     let startTime: Date
     let endTime: Date?
     
