@@ -9,21 +9,28 @@ import SwiftUI
 struct GameChooserView: View {
     // MARK: Data shared
     @State private var selection: CodeBreaker?
+    
     // MARK: Data owned
     @State private var games: [CodeBreaker] = []
     @State private var isGameEditorPresented: Bool = false
     
+    // MARK: UI
     var body: some View {
-        NavigationSplitView {
-            List(selection: $selection) {
-                ForEach(
-                    $games,
-                    editActions: [.delete, .move]
-                ) { $game in
-                    VStack {
-                        NavigationLink(value: game) {
-                            GameSummaryView(game: game)
-                        }
+        NavigationSplitView { gamesList } detail: { selectedGameView() }
+        .onAppear { loadGames() }
+        .onChange(of: games) { updateSelectedGameIfCurrentDeleted() }
+    }
+    
+    private var gamesList: some View {
+        List(selection: $selection) {
+            ForEach(
+                $games,
+                editActions: [.delete, .move]
+            ) { $game in
+                VStack {
+                    NavigationLink(value: game) {
+                        GameSummaryView(game: game)
+                    }
 //                        NavigationLink {
 //                            PegChooserView(pegChoices: game.masterCode.pegs)
 //                                .navigationTitle("\(game.name) Master Code")
@@ -31,48 +38,34 @@ struct GameChooserView: View {
 //                        } label: {
 //                            Text("Cheat 😅")
 //                        }
-                    }
-                    .contextMenu {
-                        deleteButtonView(for: game)
-                    }
-                    
                 }
-            }
-            .navigationTitle("Code Breaker")
-            .navigationBarTitleDisplayMode(.inline)
-            .listStyle(.plain)
-            .toolbar { // Lives only inside NavigationStack
-                ToolbarItem(placement: .primaryAction) { addButton }
-                ToolbarItem { EditButton() }
-            }
-        } detail: {
-            if let selection {
-                CodeBreakerView(game: selection)
-                    .navigationTitle(selection.name)
-            } else {
-                Text("Choose a game!")
+                .contextMenu {
+                    deleteButtonView(for: game)
+                }
+                
             }
         }
-        .onAppear {
-            if games.isEmpty {
-                for pallete in Pegs.palletes {
-                    games.append(CodeBreaker(
-                        name: pallete.name,
-                        pallete: pallete
-                    ))
-                }
-            }
+        .navigationTitle("Code Breaker")
+        .navigationBarTitleDisplayMode(.inline)
+        .listStyle(.plain)
+        .toolbar { // Lives only inside NavigationStack
+            ToolbarItem(placement: .primaryAction) { addButton }
+            ToolbarItem { EditButton() }
         }
-        .onChange(of: games) {
-            if let selection, !games.contains(selection) {
-                self.selection = games.first
-            }
+    }
+    
+    @ViewBuilder
+    private func selectedGameView() -> some View {
+        if let selection {
+            CodeBreakerView(game: selection)
+                .navigationTitle(selection.name)
+        } else {
+            Text("Choose a game!")
         }
     }
     
     private var addButton: some View {
         Button("Add", systemImage: "plus", role: .confirm) {
-            print("xoxo")
             isGameEditorPresented = true
         }
         .sheet(
@@ -90,10 +83,30 @@ struct GameChooserView: View {
     
     private func deleteButtonView(for game: CodeBreaker) -> some View {
         Button("Delete", systemImage: "minus.circle", role: .destructive) {
-            withAnimation {
-                games.removeAll(where: { $0 == game })
+            withAnimation { delete(game) }
+        }
+    }
+    
+    // MARK: Actions
+    private func loadGames() {
+        if games.isEmpty {
+            for pallete in Pegs.palletes {
+                games.append(CodeBreaker(
+                    name: pallete.name,
+                    pallete: pallete
+                ))
             }
         }
+    }
+    
+    private func updateSelectedGameIfCurrentDeleted() {
+        if let selection, !games.contains(selection) {
+            self.selection = games.first
+        }
+    }
+    
+    private func delete(_ game: CodeBreaker) {
+        games.removeAll(where: { $0 == game })
     }
 }
 

@@ -21,51 +21,56 @@ struct GameEditorView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Game Name") {
-                    TextField("Game Name", text: $name)
+                Section(Strings.nameSectionName) {
+                    TextField(Strings.nameSectionName, text: $name)
                 }
-                Section("Pegs Count") {
+                Section(Strings.countSectionName) {
                     Stepper("\(pegsCount)", value: $pegsCount, in: 3...6)
                 }
-                Section("Pegs Pallete") {
-                    Picker("Pallete", selection: $palette) {
-                        ForEach(Pegs.palletes) { pallete in
-                            PegChooserView(pegChoices: pallete.values)
-                                .environment(\.pegsKind, pallete.kind)
-                                .tag(pallete)
-                        }
-                    }
-                    .pickerStyle(.wheel)
+                Section(Strings.palleteSectionName) {
+                    palletPicker
                 }
             }
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel", role: .cancel) { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    doneButton
-                }
+                ToolbarItem(placement: .cancellationAction) { cancelButton }
+                ToolbarItem(placement: .confirmationAction) { doneButton }
             }
         }
     }
     
     private var doneButton: some View {
-        Button("Done", role: .confirm, action: onSubmit)
+        Button(Strings.submitButton, role: .confirm, action: onSubmit)
         .alert(
-            "Invalid Game Name",
+            Strings.errorTitle,
             isPresented: $isAlertPresented,
             actions: {
-                Button("Got it", role: .cancel) {
+                Button(Strings.errorButton, role: .cancel) {
                     isAlertPresented = false
                 }
             }, message: {
-                Text("It should not be empty 😉")
+                Text(Strings.errorMessage)
             }
         )
     }
     
+    private var cancelButton: some View {
+        Button(Strings.cancelButton, role: .cancel) { dismiss() }
+    }
+    
+    private var palletPicker: some View {
+        Picker(Strings.palleteSectionName, selection: $palette) {
+            ForEach(Pegs.palletes) { pallete in
+                PegChooserView(pegChoices: pallete.values)
+                    .environment(\.pegsKind, pallete.kind)
+                    .tag(pallete)
+            }
+        }
+        .pickerStyle(.wheel)
+    }
+    
     // MARK: Actions
-    func onSubmit() {
+    
+    private func onSubmit() {
         guard !name.isEmpty else {
             isAlertPresented = true
             return
@@ -76,6 +81,21 @@ struct GameEditorView: View {
             count: pegsCount
         ))
         dismiss()
+    }
+    
+    // MARK: Constants
+    
+    private struct Strings {
+        static let errorTitle = "Invalid Game Name"
+        static let errorMessage = "It should not be empty 😉"
+        static let errorButton = "Got it"
+        
+        static let nameSectionName = "Game Name"
+        static let countSectionName = "Pegs Count"
+        static let palleteSectionName = "Pegs Pallete"
+        
+        static let submitButton = "Done"
+        static let cancelButton = "Cancel"
     }
 }
 

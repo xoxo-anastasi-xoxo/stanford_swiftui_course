@@ -1,0 +1,44 @@
+//
+//  TrackGameElapsedTimeViewModifier.swift
+//  CodeBreaker
+//
+//  Created by Anastasiia Kazantseva on 28/08/2026.
+//
+
+import SwiftUI
+
+struct TrackGameElapsedTimeViewModifier: ViewModifier {
+    // MARK: Data in
+    @Environment(\.scenePhase) var scenePhase
+    
+    // MARK: Data shared
+    @Bindable var game: CodeBreaker
+    
+    func body(content: Content) -> some View {
+        content
+            .onAppear {
+                game.startTimer()
+            }
+            .onDisappear {
+                game.pauseTimer()
+            }
+            .onChange(of: game) { oldGame, newGame in
+                oldGame.pauseTimer()
+                newGame.startTimer()
+            }
+            .onChange(of: scenePhase) {
+                print("scenePhase: \(scenePhase)")
+                switch scenePhase {
+                case .active: game.startTimer()
+                case .inactive: game.pauseTimer()
+                default: break
+                }
+            }
+    }
+}
+
+extension View {
+    func trackElapsedTime(for game: CodeBreaker) -> some View {
+        modifier(TrackGameElapsedTimeViewModifier(game: game))
+    }
+}

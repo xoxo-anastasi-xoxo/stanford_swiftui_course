@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CodeBreakerView: View {
-    // MARK: Data in
+    // MARK: Data shared
     let game: CodeBreaker
     // MARK: Data owned
     // Just for the sake of using Binding we mess up types 😞
@@ -45,13 +45,17 @@ struct CodeBreakerView: View {
                 .frame(maxHeight: 80)
             }
         }
+        .trackElapsedTime(for: game)
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                restartButton
+            if !game.isOver {
+                ToolbarItem(placement: .primaryAction) { restartButton }
             }
             ToolbarItem {
-                ElapsedTimeView(startTime: game.startTime, endTime: game.endTime)
-                    .monospaced()
+                ElapsedTimeView(
+                    startTime: game.startTime,
+                    elapsedTime: game.elapsedTime
+                )
+                .monospaced()
             }
         }
         .padding()

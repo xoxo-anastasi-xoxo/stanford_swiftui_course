@@ -20,7 +20,7 @@ struct PegStyleModifier<OverlayContent: View>: ViewModifier {
 }
 
 extension View {
-    public func stylePeg<OverlayContent: View>(
+    func stylePeg<OverlayContent: View>(
         foregroundColorName: String,
         @ViewBuilder overlayContent: @escaping () -> OverlayContent
     ) -> some View {

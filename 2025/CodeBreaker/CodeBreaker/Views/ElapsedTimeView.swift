@@ -7,26 +7,17 @@
 import SwiftUI
 
 struct ElapsedTimeView: View {
-    let startTime: Date
-    let endTime: Date?
+    let startTime: Date?
+    let elapsedTime: TimeInterval
     
     var body: some View {
-        if let endTime {
-            Text(
-                endTime,
-                format: .offset(
-                    to: startTime,
-                    allowedFields: [.minute, .second]
-                )
-            )
-        } else {
+        if let startTime {
             Text(
                 TimeDataSource<Date>.currentDate,
-                format: .offset(
-                    to: startTime,
-                    allowedFields: [.minute, .second]
-                )
+                format: .offset(to: startTime - elapsedTime, allowedFields: [.minute, .second])
             )
+        } else {
+            Text(Duration.seconds(elapsedTime), format: .time(pattern: .minuteSecond))
         }
     }
 }

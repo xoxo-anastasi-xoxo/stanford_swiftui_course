@@ -10,15 +10,15 @@ import SwiftUI
 @Observable
 class CodeBreaker {
     // Configuration
-    var pegChoices: Pegs
-    var name: String
+    let pegChoices: Pegs
+    let name: String
     
     // Gameplay
     var masterCode: Code
     var guess: Code
     var attempts: [Code] = [Code]()
-    var startTime: Date
-    var endTime: Date?
+    var elapsedTime: TimeInterval = 0
+    var startTime: Date? // last game session start time
     
     var isOver: Bool {
         attempts.last?.pegs == masterCode.pegs
@@ -31,23 +31,16 @@ class CodeBreaker {
         self.pegChoices = pallete ?? .palletes.randomElement() ?? .circles
         let pegsCount = count ?? Self.getRandomPegsCount()
         guess = Code(kind: .guess, count: pegsCount)
-        startTime = .now
         masterCode = Code(kind: .master(isHidden: true), count: pegsCount)
         masterCode.randomize(from: pegChoices.values)
     }
     
-    // TODO: Repeats the init logic
     func reset() {
-        pegChoices = .palletes.randomElement() ?? .circles
-        let pegsCount = Self.getRandomPegsCount()
-        // TODO: CONSTANTS?
-        guess = Code(kind: .guess, count: pegsCount)
+        guess = Code(kind: .guess, count: masterCode.pegs.count)
         attempts = []
-        __attempts = []
+        elapsedTime = 0
         startTime = .now
-        endTime = nil
-        masterCode = Code(kind: .master(isHidden: true), count: pegsCount)
-        masterCode.randomize(from: pegChoices.values)
+        __attempts = []
     }
     
     func setGuessPeg(to peg: Peg, at index: Int) {
@@ -67,9 +60,21 @@ class CodeBreaker {
         guess = Code(kind: .guess, count: guess.pegs.count)
         if isOver {
             masterCode.kind = .master(isHidden: false)
-            endTime = .now
+            pauseTimer()
         }
         return true
+    }
+    
+    func startTimer() {
+        if startTime == nil {
+            startTime = .now
+        }
+    }
+    func pauseTimer() {
+        if let startTime {
+            elapsedTime += Date.now.timeIntervalSince(startTime)
+        }
+        startTime = nil
     }
     
     private static func getRandomPegsCount() -> Int {
