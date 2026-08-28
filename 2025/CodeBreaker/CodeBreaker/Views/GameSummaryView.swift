@@ -11,7 +11,7 @@ struct GameSummaryView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(game.pegChoices.name).font(.title)
+            Text(game.name).font(.title)
             PegChooserView(pegChoices: game.pegChoices.values)
                 .environment(\.pegsKind, game.pegChoices.kind)
                 .frame(maxHeight: 60)

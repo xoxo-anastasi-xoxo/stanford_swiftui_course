@@ -132,7 +132,7 @@ struct CodeBreakerView: View {
 }
 
 #Preview {
-    @Previewable @State var game = CodeBreaker()
+    @Previewable @State var game = CodeBreaker(name: "Preview")
     NavigationStack {
         CodeBreakerView(game: game)
     }

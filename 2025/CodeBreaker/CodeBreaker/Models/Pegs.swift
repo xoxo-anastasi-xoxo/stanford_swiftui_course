@@ -11,7 +11,7 @@ extension Peg {
     static let missing: Peg = ""
 }
 
-struct Pegs: Hashable {
+struct Pegs: Hashable, Identifiable {
     enum Kind {
         case emogi
         case circle
@@ -20,6 +20,8 @@ struct Pegs: Hashable {
     let name: String
     let values: [Peg]
     let kind: Kind
+    
+    var id: String { name }
     
     static let circles: Pegs = Pegs(name: "Classic Colors", values: ["red", "green", "blue", "yellow"], kind: .circle)
     static let stars: Pegs = Pegs(name: "Colored Stars", values: ["yellow", "orange", "purple", "pink"], kind: .star)

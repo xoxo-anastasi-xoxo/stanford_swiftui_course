@@ -11,6 +11,7 @@ import SwiftUI
 class CodeBreaker {
     // Configuration
     var pegChoices: Pegs
+    var name: String
     
     // Gameplay
     var masterCode: Code
@@ -25,7 +26,8 @@ class CodeBreaker {
     
     private var __attempts = Set<Code>()
     
-    init(pallete: Pegs? = nil, count: Int? = nil) {
+    init(name: String, pallete: Pegs? = nil, count: Int? = nil) {
+        self.name = name
         self.pegChoices = pallete ?? .palletes.randomElement() ?? .circles
         let pegsCount = count ?? Self.getRandomPegsCount()
         guess = Code(kind: .guess, count: pegsCount)
