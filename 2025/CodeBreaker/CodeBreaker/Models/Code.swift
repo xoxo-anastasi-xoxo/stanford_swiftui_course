@@ -4,18 +4,17 @@
 //
 //  Created by Anastasiia Kazantseva on 15/08/2026.
 //
+import SwiftData
 
-struct Code: Identifiable, Hashable {
-    enum Kind: Hashable {
-        case master(isHidden: Bool)
-        case guess
-        case attempt(matches: Matches)
-    }
-    
-    var kind: Kind
+@Model
+class Code: Identifiable, Hashable {
+    var _kind: String
     var pegs: [Peg]
     
-    
+    var kind: Kind {
+        get { Kind(from: _kind) }
+        set { _kind = newValue.description }
+    }
     var isFilled: Bool {
         !pegs.contains(.missing)
     }
@@ -25,14 +24,19 @@ struct Code: Identifiable, Hashable {
         case .guess, .attempt: false 
         }
     }
-    var id: Self { self }
+//    var id: Self { self }
     
     init(kind: Kind, count: Int) {
-        self.kind = kind
+        self._kind = kind.description
         self.pegs = .init(repeating: .missing, count: count)
     }
     
-    mutating func randomize(from choises: [Peg]) {
+    init(kind: Kind, pegs: [Peg]) {
+        self._kind = kind.description
+        self.pegs = pegs
+    }
+    
+    func randomize(from choises: [Peg]) {
         for i in pegs.indices {
             pegs[i] = choises.randomElement() ?? .missing
         }

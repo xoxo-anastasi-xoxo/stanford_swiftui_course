@@ -12,6 +12,7 @@ struct ElapsedTimeView: View {
     
     var body: some View {
         if let startTime {
+            let _ = print(startTime)
             Text(
                 TimeDataSource<Date>.currentDate,
                 format: .offset(to: startTime - elapsedTime, allowedFields: [.minute, .second])

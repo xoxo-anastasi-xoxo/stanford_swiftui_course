@@ -4,27 +4,27 @@
 //
 //  Created by Anastasiia Kazantseva on 13/08/2026.
 //
+import Foundation
+import SwiftData
 
-import SwiftUI
-
-@Observable
+@Model
 class CodeBreaker {
     // Configuration
-    let pegChoices: Pegs
-    let name: String
+    var pegChoices: Pegs
+    var name: String
     
     // Gameplay
-    var masterCode: Code
-    var guess: Code
-    var attempts: [Code] = [Code]()
+    @Relationship(deleteRule: .cascade) var masterCode: Code
+    @Relationship(deleteRule: .cascade) var guess: Code
+    @Relationship(deleteRule: .cascade) var attempts: [Code] = [Code]()
     var elapsedTime: TimeInterval = 0
-    var startTime: Date? // last game session start time
+    @Transient var startTime: Date? // last game session start time
     
     var isOver: Bool {
         attempts.last?.pegs == masterCode.pegs
     }
     
-    private var __attempts = Set<Code>()
+    @Transient private var __attempts = Set<Code>() // TODO: hmmmm ???
     
     init(name: String, pallete: Pegs? = nil, count: Int? = nil) {
         self.name = name
@@ -52,8 +52,7 @@ class CodeBreaker {
     @discardableResult
     func attemptGuess() -> Bool {
         guard guess.isFilled else { return false }
-        var attempt = guess
-        attempt.kind = .attempt(matches: attempt.matchAgainst(masterCode))
+        let attempt = Code(kind: .attempt(matches: guess.matchAgainst(masterCode)), pegs: guess.pegs)
         guard !__attempts.contains(attempt) else { return false }
         attempts.append(attempt)
         __attempts.insert(attempt)
@@ -66,8 +65,10 @@ class CodeBreaker {
     }
     
     func startTimer() {
+        print("start timer")
         if startTime == nil {
             startTime = .now
+            elapsedTime += 0.00001 // hack: @Transient startTime does not update UI, so we force it to update by changing other observable var
         }
     }
     func pauseTimer() {
@@ -82,14 +83,13 @@ class CodeBreaker {
     }
 }
 
-extension CodeBreaker: Identifiable, Hashable {
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-    
-    static func == (lhs: CodeBreaker, rhs: CodeBreaker) -> Bool {
-        lhs.id == rhs.id
-    }
-     
-}
+// TODO: Check if we need this
+//extension CodeBreaker: Identifiable, Hashable {
+//    func hash(into hasher: inout Hasher) {
+//        hasher.combine(id)
+//    }
+//    
+//    static func == (lhs: CodeBreaker, rhs: CodeBreaker) -> Bool {
+//        lhs.id == rhs.id
+//    }
+//}

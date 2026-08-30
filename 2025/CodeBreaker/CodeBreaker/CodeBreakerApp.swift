@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 extension EnvironmentValues {
     @Entry var pegsKind: Pegs.Kind = .circle
@@ -16,6 +17,7 @@ struct CodeBreakerApp: App {
     var body: some Scene {
         WindowGroup {
             GameChooserView()
+                .modelContainer(for: CodeBreaker.self)
         }
     }
 }
