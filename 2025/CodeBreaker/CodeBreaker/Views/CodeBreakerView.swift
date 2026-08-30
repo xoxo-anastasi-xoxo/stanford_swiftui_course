@@ -135,7 +135,7 @@ struct CodeBreakerView: View {
     }
 }
 
-#Preview {
+#Preview(traits: .swiftData) {
     @Previewable @State var game = CodeBreaker(name: "Preview")
     NavigationStack {
         CodeBreakerView(game: game)
