@@ -9,15 +9,15 @@ import SwiftData
 
 struct GameListView: View {
     enum SortBy: CaseIterable {
-        case name
         case creationTimestamp
         case lastAttemptTimestamp
+        case compleated
         
         var title: String {
             switch self {
-            case .name: return "Name"
             case .creationTimestamp: return "Last Created"
             case .lastAttemptTimestamp: return "Last Played"
+            case .compleated: return "Completed"
             }
         }
     }
@@ -36,13 +36,15 @@ struct GameListView: View {
         sortBy: SortBy,
         selection: Binding<CodeBreaker?>
     ) {
-        let predicate = #Predicate<CodeBreaker> {
-            search.isEmpty || $0.name.localizedStandardContains(search)
+        let isCompleatedOnly = sortBy == .compleated
+        let predicate = #Predicate<CodeBreaker> { game in
+            (!isCompleatedOnly || game._attempts.contains(where: { game.masterCode.pegs == $0.pegs })) &&
+            (search.isEmpty || game.name.localizedStandardContains(search))
         }
         self._games = switch sortBy {
-            case .name: Query(filter: predicate, sort: \.name)
             case .creationTimestamp: Query(filter: predicate, sort: \.timestamp, order: .reverse)
             case .lastAttemptTimestamp: Query(filter: predicate, sort: \.lastAttemptTimestamp, order: .reverse)
+            case .compleated: Query(filter: predicate, sort: \.lastAttemptTimestamp, order: .reverse)
         }
         self._selection = selection
     }
@@ -81,8 +83,8 @@ struct GameListView: View {
     }
     
     private func updateSelectedGameIfCurrentDeleted() {
-        if let selection, !games.contains(selection) {
-            self.selection = games.first
-        }
+//        if let selection, !games.contains(selection) {
+//            self.selection = games.first
+//        }
     }
 }

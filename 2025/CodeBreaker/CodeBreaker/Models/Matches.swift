@@ -12,9 +12,8 @@ struct Matches: Hashable, CustomStringConvertible {
     let total: Int
     
     init(from string: String) {
-        // TODO: to maintain propper functioning all separator's must be stored together (to ensure they are unique and do not overlap)
         let parts = string
-            .components(separatedBy: "_")
+            .components(separatedBy: Self.separator)
             .map { Int($0) ?? 0 }
         
         self.exact = parts.count > 0 ? parts[0] : 0
@@ -29,6 +28,8 @@ struct Matches: Hashable, CustomStringConvertible {
     }
     
     var description: String {
-        "\(exact)_\(inexact)_\(total)"
+        "\(exact)\(Self.separator)\(inexact)\(Self.separator)\(total)"
     }
+    
+    private static let separator = Separator.matches
 }

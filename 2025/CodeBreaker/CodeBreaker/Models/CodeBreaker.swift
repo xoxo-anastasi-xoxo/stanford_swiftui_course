@@ -30,7 +30,7 @@ class CodeBreaker {
         _attempts.sorted(by: { $0.timestamp > $1.timestamp })
     }
     var isOver: Bool {
-        attempts.last?.pegs == masterCode.pegs
+        attempts.first?.pegs == masterCode.pegs
     }
     
     init(name: String, pallete: Pegs? = nil, count: Int? = nil) {

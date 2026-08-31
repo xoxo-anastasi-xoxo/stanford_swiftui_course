@@ -32,7 +32,7 @@ extension Code {
             }
         }
         
-        private static let separator = " "
+        private static let separator = Separator.codeKind
         private static let masterLiteral = "master"
         private static let guessLiteral = "guess"
         private static let attemptLiteral = "attempt"

@@ -16,7 +16,7 @@ struct GameChooserView: View {
     
     // MARK: Data owned
     @State private var isGameEditorPresented: Bool = false
-    @State private var sortOption: GameListView.SortBy = .name
+    @State private var sortOption: GameListView.SortBy = .creationTimestamp
     @State private var search: String = ""
     
     // MARK: UI
@@ -33,6 +33,7 @@ struct GameChooserView: View {
                         .flexibleSystemFont()
                 }
             }
+            .padding(.horizontal)
             .pickerStyle(.segmented)
             GameListView(
                 nameContains: search,

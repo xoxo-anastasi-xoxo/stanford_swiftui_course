@@ -28,7 +28,7 @@ struct CodeBreakerView: View {
                     guessCodeView
                         .opacity(isRestarting ? 0 : 1)
                 }
-                ForEach(game.attempts.reversed()) {
+                ForEach(game.attempts) {
                     attemptCodeView(for: $0, isMostRecent: game.attempts.last == $0)
                 }
             }
