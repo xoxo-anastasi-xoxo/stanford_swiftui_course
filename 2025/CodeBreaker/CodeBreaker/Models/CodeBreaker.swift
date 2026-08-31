@@ -9,22 +9,29 @@ import SwiftData
 
 @Model
 class CodeBreaker {
+    var timestamp = Date.now
+    
     // Configuration
     var pegChoices: Pegs
     var name: String
     
-    // Gameplay
+    // Gameplay Stored
     @Relationship(deleteRule: .cascade) var masterCode: Code
     @Relationship(deleteRule: .cascade) var guess: Code
-    @Relationship(deleteRule: .cascade) var attempts: [Code] = [Code]()
+    @Relationship(deleteRule: .cascade) var _attempts: [Code] = [Code]()
+    var lastAttemptTimestamp = Date.now
     var elapsedTime: TimeInterval = 0
+    
+    // Gameplay Not Stored
     @Transient var startTime: Date? // last game session start time
     
+    // Gameplay Computed
+    var attempts: [Code] {
+        _attempts.sorted(by: { $0.timestamp > $1.timestamp })
+    }
     var isOver: Bool {
         attempts.last?.pegs == masterCode.pegs
     }
-    
-    @Transient private var __attempts = Set<Code>() // TODO: hmmmm ???
     
     init(name: String, pallete: Pegs? = nil, count: Int? = nil) {
         self.name = name
@@ -37,10 +44,9 @@ class CodeBreaker {
     
     func reset() {
         guess = Code(kind: .guess, count: masterCode.pegs.count)
-        attempts = []
+        _attempts = []
         elapsedTime = 0
         startTime = .now
-        __attempts = []
     }
     
     func setGuessPeg(to peg: Peg, at index: Int) {
@@ -53,9 +59,9 @@ class CodeBreaker {
     func attemptGuess() -> Bool {
         guard guess.isFilled else { return false }
         let attempt = Code(kind: .attempt(matches: guess.matchAgainst(masterCode)), pegs: guess.pegs)
-        guard !__attempts.contains(attempt) else { return false }
-        attempts.append(attempt)
-        __attempts.insert(attempt)
+        guard !_attempts.contains(attempt) else { return false }
+        _attempts.append(attempt)
+        lastAttemptTimestamp = .now
         guess = Code(kind: .guess, count: guess.pegs.count)
         if isOver {
             masterCode.kind = .master(isHidden: false)
@@ -65,7 +71,6 @@ class CodeBreaker {
     }
     
     func startTimer() {
-        print("start timer")
         if startTime == nil {
             startTime = .now
             elapsedTime += 0.00001 // hack: @Transient startTime does not update UI, so we force it to update by changing other observable var
@@ -82,14 +87,3 @@ class CodeBreaker {
         (3...6).randomElement() ?? 4
     }
 }
-
-// TODO: Check if we need this
-//extension CodeBreaker: Identifiable, Hashable {
-//    func hash(into hasher: inout Hasher) {
-//        hasher.combine(id)
-//    }
-//    
-//    static func == (lhs: CodeBreaker, rhs: CodeBreaker) -> Bool {
-//        lhs.id == rhs.id
-//    }
-//}

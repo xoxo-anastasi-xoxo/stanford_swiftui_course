@@ -4,12 +4,14 @@
 //
 //  Created by Anastasiia Kazantseva on 15/08/2026.
 //
+import Foundation
 import SwiftData
 
 @Model
 class Code: Identifiable, Hashable {
     var _kind: String
     var pegs: [Peg]
+    var timestamp = Date.now
     
     var kind: Kind {
         get { Kind(from: _kind) }
@@ -24,7 +26,6 @@ class Code: Identifiable, Hashable {
         case .guess, .attempt: false 
         }
     }
-//    var id: Self { self }
     
     init(kind: Kind, count: Int) {
         self._kind = kind.description

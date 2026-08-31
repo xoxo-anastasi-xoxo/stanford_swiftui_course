@@ -5,52 +5,49 @@
 //  Created by Anastasiia Kazantseva on 25/08/2026.
 //
 import SwiftUI
+import SwiftData
 
 struct GameChooserView: View {
+    // MARK: Data in
+    @Environment(\.modelContext) var modelContext
+    
     // MARK: Data shared
     @State private var selection: CodeBreaker?
     
     // MARK: Data owned
-    @State private var games: [CodeBreaker] = []
     @State private var isGameEditorPresented: Bool = false
+    @State private var sortOption: GameListView.SortBy = .name
+    @State private var search: String = ""
     
     // MARK: UI
     var body: some View {
         NavigationSplitView { gamesList } detail: { selectedGameView() }
         .onAppear { loadGames() }
-        .onChange(of: games) { updateSelectedGameIfCurrentDeleted() }
     }
     
     private var gamesList: some View {
-        List(selection: $selection) {
-            ForEach(
-                $games,
-                editActions: [.delete, .move]
-            ) { $game in
-                VStack {
-                    NavigationLink(value: game) {
-                        GameSummaryView(game: game)
-                    }
-//                        NavigationLink {
-//                            PegChooserView(pegChoices: game.masterCode.pegs)
-//                                .navigationTitle("\(game.name) Master Code")
-//                                .environment(\.pegsKind, game.pegChoices.kind)
-//                        } label: {
-//                            Text("Cheat 😅")
-//                        }
+        VStack {
+            Picker("", selection: $sortOption) {
+                ForEach(GameListView.SortBy.allCases, id: \.self) {
+                    Text($0.title)
+                        .flexibleSystemFont()
                 }
-                .contextMenu {
-                    deleteButtonView(for: game)
-                }
-                
             }
+            .pickerStyle(.segmented)
+            GameListView(
+                nameContains: search,
+                sortBy: sortOption,
+                selection: $selection
+            )
+            .searchable(text: $search)
+            .animation(.easeInOut, value: sortOption)
+            .animation(.easeInOut, value: search)
         }
         .navigationTitle("Code Breaker")
         .navigationBarTitleDisplayMode(.inline)
         .listStyle(.plain)
         .toolbar { // Lives only inside NavigationStack
             ToolbarItem(placement: .primaryAction) { addButton }
-            ToolbarItem { EditButton() }
         }
     }
     
@@ -75,38 +72,23 @@ struct GameChooserView: View {
             }
         ) {
             GameEditorView {
-                games.insert($0, at: 0)
-                selection = games.first
+                modelContext.insert($0)
+                selection = $0
             }
-        }
-    }
-    
-    private func deleteButtonView(for game: CodeBreaker) -> some View {
-        Button("Delete", systemImage: "minus.circle", role: .destructive) {
-            withAnimation { delete(game) }
         }
     }
     
     // MARK: Actions
     private func loadGames() {
-        if games.isEmpty {
+        let descriptor = FetchDescriptor<CodeBreaker>()
+        if let count = try? modelContext.fetchCount(descriptor), count == 0 {
             for pallete in Pegs.palletes {
-                games.append(CodeBreaker(
+                modelContext.insert(CodeBreaker(
                     name: pallete.name,
                     pallete: pallete
                 ))
             }
         }
-    }
-    
-    private func updateSelectedGameIfCurrentDeleted() {
-        if let selection, !games.contains(selection) {
-            self.selection = games.first
-        }
-    }
-    
-    private func delete(_ game: CodeBreaker) {
-        games.removeAll(where: { $0 == game })
     }
 }
 
