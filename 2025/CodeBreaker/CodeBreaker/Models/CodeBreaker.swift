@@ -82,6 +82,10 @@ class CodeBreaker {
         }
         startTime = nil
     }
+    func updateElapsedTime() {
+        pauseTimer()
+        startTimer()
+    }
     
     private static func getRandomPegsCount() -> Int {
         (3...6).randomElement() ?? 4

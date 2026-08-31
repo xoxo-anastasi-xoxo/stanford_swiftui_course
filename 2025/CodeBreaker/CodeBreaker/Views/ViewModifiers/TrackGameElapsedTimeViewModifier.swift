@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct TrackGameElapsedTimeViewModifier: ViewModifier {
     // MARK: Data in
     @Environment(\.scenePhase) var scenePhase
+    @Environment(\.modelContext) var modelContext
     
     // MARK: Data shared
     @Bindable var game: CodeBreaker
@@ -32,6 +34,11 @@ struct TrackGameElapsedTimeViewModifier: ViewModifier {
                 case .active: game.startTimer()
                 case .inactive: game.pauseTimer()
                 default: break
+                }
+            }
+            .task {
+                for await _ in NotificationCenter.default.notifications(named: ModelContext.willSave) {
+                    game.updateElapsedTime()
                 }
             }
     }
