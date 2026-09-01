@@ -10,14 +10,19 @@ import SwiftData
 
 extension EnvironmentValues {
     @Entry var pegsKind: Pegs.Kind = .circle
+    @Entry var sceneFrame: CGRect = .zero
 }
 
 @main
 struct CodeBreakerApp: App {
     var body: some Scene {
         WindowGroup {
-            GameChooserView()
-                .modelContainer(for: CodeBreaker.self)
+            GeometryReader { geometry in
+                GameChooserView()
+                    .modelContainer(for: CodeBreaker.self)
+                    .environment(\.sceneFrame, geometry.frame(in: .global))
+            }
+            .ignoresSafeArea()
         }
     }
 }

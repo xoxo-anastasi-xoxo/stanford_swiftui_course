@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct CodeBreakerView: View {
+    // MARK: Data in
+    @Environment(\.sceneFrame) var sceneFrame
     // MARK: Data shared
     let game: CodeBreaker
     // MARK: Data owned
@@ -29,21 +31,25 @@ struct CodeBreakerView: View {
                         .opacity(isRestarting ? 0 : 1)
                 }
                 ForEach(game.attempts) {
-                    attemptCodeView(for: $0, isMostRecent: game.attempts.last == $0)
+                    attemptCodeView(for: $0, isMostRecent: game.attempts.first == $0)
                 }
             }
-            if !game.isOver {
-                PegChooserView(pegChoices: game.pegChoices.values) { peg in
-                    game.setGuessPeg(
-                        to: peg,
-                        at: selectedGuessPegIndex!
-                    )
-                    selectedGuessPegIndex! += 1
-                    selectedGuessPegIndex! %= game.guess.pegs.count
+            GeometryReader { geometry in
+                let offset = sceneFrame.maxY - geometry.frame(in: .global).minY
+                if !game.isOver {
+                    PegChooserView(pegChoices: game.pegChoices.values) { peg in
+                        game.setGuessPeg(
+                            to: peg,
+                            at: selectedGuessPegIndex!
+                        )
+                        selectedGuessPegIndex! += 1
+                        selectedGuessPegIndex! %= game.guess.pegs.count
+                    }
+                    .transition(.offset(x: 0, y: offset))
                 }
-                .transition(Constants.pegChooserTransition)
-                .frame(maxHeight: 80)
             }
+            .aspectRatio(CGFloat(game.pegChoices.values.count), contentMode: .fit)
+            .frame(maxHeight: 80)
         }
         .trackElapsedTime(for: game)
         .toolbar {
@@ -122,7 +128,7 @@ struct CodeBreakerView: View {
     struct Constants {
         static let restartButtonColor: Color = .red
         
-        static let pegChooserTransition = AnyTransition.offset(x: 0, y: 200)
+//        static let pegChooserTransition = AnyTransition.offset(x: 0, y: 200)
         
         static let defaultAnimation: Animation = .easeInOut
         
