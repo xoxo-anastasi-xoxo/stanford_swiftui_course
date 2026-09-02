@@ -1,4 +1,4 @@
-![Progress](https://img.shields.io/badge/progress-37%25-yellow)
+![Progress](https://img.shields.io/badge/progress-75%25-yellow)
 # CS193p Spring 2025
 
 https://cs193p.sites.stanford.edu/2025
@@ -119,9 +119,62 @@ Some not really strict catigorisation:
 
 💫 `@Binding` allows us to pass data owned by us to other views for future modification. `@Binding` is never `private`
 
-----
+💫 `@Bindable` makes Bindings to `@Observable`objects properties
 
-💫 `@Observable` is `@Binding` but for classes
+## Lecture 7: Animations
 
-💫 closures are refs because they need to store their captured variables somewhere.
+Only changes can be animated. Animation shows the user smth that **have already happend**.
 
+- view modifiers values changes - it happens only if the view is on screen
+- views existance (called transition animation) - it happens only if views container already on screen
+- shapes
+
+💫 We can use `onAppear` to understand when our view is actually on screen and could be animated.
+
+💫 `Shape` and `ViewModifier` could confirm to `Animatable`, where we can describe our custom animations.
+
+### Types of animations
+
+Explicit animations (`withAnimation`) do not override or prevent implicit animations (`.animation(...)`).
+
+#### `.animation(Animation?, value: some Equatable)`
+
+It declares the animation. It is the animation with the most priority. 
+
+It only gonna change what's inside the modifier in terms of types (aka the order of view modifiers here matters a lot)
+
+This modifier can be used with containers. They will propogate the animation to it's views.
+
+Can supress the animation.
+
+#### `withAnimation(Animation) {...} completion {...} `
+
+💫 We can chain animations calling another `withAnimation` in completion.
+
+`withAnimation` does not overwrite `.animation(...)`.
+
+#### `withTransaction` + `.transaction(...)`
+
+Operates on Transaction struct, where I can pass my specific data to decide do I need animation or not (ex. user clicked and caused navigation or it was triggered through code).
+
+#### `Binding.animation(...)`
+
+It's like we are wrapping all changes of this binding in `withAnimation`
+
+#### `.transition(AnyTransition)`
+
+Animates the appearing and disappearing of a view.
+
+-----------------------------
+
+#### `.matchedGeometryEffect(id: ID, in: Namespace)`
+
+Special kind of transition.
+
+Helps us to animate view "moving between containers". 
+
+In generic case our only task is to make sure these views are not in the UI together at the same time. There are other possible use cases, but they are much less common (do research if you are interested)
+
+#### `TimelineView` and other specific views
+
+`TimelineView` gets a VuewBuilder in which we can read a context (ex. DateTime) and build the view the want.
