@@ -42,8 +42,7 @@ struct CodeBreakerView: View {
                             to: peg,
                             at: selectedGuessPegIndex!
                         )
-                        selectedGuessPegIndex! += 1
-                        selectedGuessPegIndex! %= game.guess.pegs.count
+                        incrementSelectedGuessPegIndex()
                     }
                     .transition(.offset(x: 0, y: offset))
                 }
@@ -51,6 +50,7 @@ struct CodeBreakerView: View {
             .aspectRatio(CGFloat(game.pegChoices.values.count), contentMode: .fit)
             .frame(maxHeight: 80)
         }
+        .highPriorityGesture(pegChoosingDial)
         .trackElapsedTime(for: game)
         .toolbar {
             if !game.isOver {
@@ -66,6 +66,20 @@ struct CodeBreakerView: View {
         }
         .padding()
         .environment(\.pegsKind, game.pegChoices.kind)
+    }
+    
+    private var pegChoosingDial: some Gesture {
+        RotateGesture()
+            .onChanged { value in
+                let ind = Int(abs(value.rotation.degrees) / 90) % game.pegChoices.values.count
+                game.setGuessPeg(
+                    to: game.pegChoices.values[ind],
+                    at: selectedGuessPegIndex!
+                )
+            }
+            .onEnded { _ in
+                incrementSelectedGuessPegIndex()
+            }
     }
     
     private var masterCodeView: some View {
@@ -125,10 +139,17 @@ struct CodeBreakerView: View {
         }
     }
     
+    // MARK: Actions
+    
+    private func incrementSelectedGuessPegIndex() {
+        selectedGuessPegIndex! += 1
+        selectedGuessPegIndex! %= game.guess.pegs.count
+    }
+    
+    // MARK: Constants
+    
     struct Constants {
         static let restartButtonColor: Color = .red
-        
-//        static let pegChooserTransition = AnyTransition.offset(x: 0, y: 200)
         
         static let defaultAnimation: Animation = .easeInOut
         
